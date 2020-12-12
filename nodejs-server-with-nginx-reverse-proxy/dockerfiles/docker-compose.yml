@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: joji/nginx
+    container_name: joji-nginx
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./nginx.dockerfile
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../src:/home/app
+    networks:
+      - app-network
+    ports:
+      - "80:80"
+      - "443:443"
+
+  app:
+    image: joji/app
+    container_name: joji-app
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./app.dockerfile
+    volumes:
+      - ../src:/home/app
+    networks:
+      - app-network
+
+volumes:
+  nginx:
+  src:
+
+networks:
+  app-network:
+    driver: bridge
